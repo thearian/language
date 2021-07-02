@@ -13,11 +13,9 @@ fn main() {
 
     if should_run {
         let output: Output = run_file(&destination);
-        let stdout = match std::str::from_utf8(&output.stdout) {
-            Ok(v) => v,
-            Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
-        };
-        println!("Output: \n{}", stdout)
+        println!("Successfully ran with this output: \n{}",
+            buffer_to_string(&output.stdout)
+        );
     }
 }
 
@@ -26,13 +24,16 @@ fn get_and_read_inputs() -> (String, String, bool) {
     let args = get_env_args();
 
     if args.len() < 2 {
-        panic!("\n\tExample of use: \n\tlanguage myfile \n\tor \n\tlanguage myfile myapp\n");
+        panic!("\n\tExample of use:
+        \n\tlanguage myfile
+        \n\tor
+        \n\tlanguage myfile myapp\n");
     }
 
     let filepath = &args[1];
     let content = read_file(filepath);
 
-    println!("Succussfully read from {}",filepath);
+    println!("Successfully read from '{}'",filepath);
 
     let mut destination = String::from("app");
     if args.len() > 2 {
@@ -40,7 +41,7 @@ fn get_and_read_inputs() -> (String, String, bool) {
     }
 
     let should_run: bool = args.iter().any(
-        |arg| arg=="-r"
+        |arg| arg=="-r" || arg=="--run"
     );
 
     ( content, destination, should_run )
@@ -89,4 +90,12 @@ fn run_file(destination: &String) -> Output {
                 .expect("failed to execute process")
     };
     output
+}
+
+fn buffer_to_string(buffer: &[u8]) -> &str {
+    return
+        match std::str::from_utf8(buffer) {
+            Ok(v) => v,
+            Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
+        };
 }
