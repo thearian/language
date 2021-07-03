@@ -8,7 +8,9 @@ use std::process::Output;
 fn main() {
     let (content, destination, should_run) = get_and_read_inputs();
 
-    let result = write_file(&destination, &content);
+    let compiled = compile_content(&content);
+
+    let result = write_file(&destination, &compiled);
     print_result(result, &destination);
 
     if should_run {
@@ -98,4 +100,36 @@ fn buffer_to_string(buffer: &[u8]) -> &str {
             Ok(v) => v,
             Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
         };
+}
+
+fn compile_content(content: &String) -> String {
+    let lines: String = iter_lines(&content);
+    iter_words(&lines)
+}
+
+fn iter_lines(text: &String) -> String {
+    let lines: std::str::SplitWhitespace = text.split_whitespace();
+    lines.map(|line| {
+        let mut owned_line = line.to_owned();
+        owned_line.push_str("\n");
+        owned_line
+    }).collect()
+}
+
+fn iter_words(text: &String) -> String {
+    let words: std::str::SplitWhitespace = text.split_whitespace();
+    words.map(|word| {
+        let mut owned_word = word.to_owned();
+        owned_word = map_word(&owned_word);
+        owned_word.push_str(" ");
+        owned_word
+    }).collect()
+}
+
+fn map_word(word: &String) -> String {
+    let maped = match word.as_str() {
+        "untill" => "while not",
+        default => default,
+    };
+    String::from(maped)
 }
