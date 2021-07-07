@@ -103,16 +103,17 @@ fn buffer_to_string(buffer: &[u8]) -> &str {
 }
 
 fn compile_content(content: &String) -> String {
-    let lines: String = iter_lines(&content);
-    iter_words(&lines)
+    iter_lines(&content)
 }
 
 fn iter_lines(text: &String) -> String {
-    let lines: std::str::SplitWhitespace = text.split_whitespace();
+    let lines: std::str::Lines = text.lines();
     lines.map(|line| {
-        let mut owned_line = line.to_owned();
-        owned_line.push_str("\n");
-        owned_line
+        println!("{}",line);
+        let owned_line = line.to_owned();
+        let mut compiled_line = iter_words(&owned_line);
+        compiled_line.push_str("\n");
+        compiled_line
     }).collect()
 }
 
