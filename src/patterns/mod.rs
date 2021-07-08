@@ -1,13 +1,15 @@
 use regex::Regex;
 
+mod loops;
+mod functions;
+
 
 pub fn compile(text: &String) -> String {
-    let statements: Vec<[&str; 2]> = vec!(
-        [r"untill (?P<t>.+)", "while not $t:"],
-        [r"get (?P<t>.+)", "input($t)"],
-        [r"am|is|are (?P<t>.+)", "==$t"],
-        [r"do|then (?P<t>.+)", "$t"],
-    );
+    let mut statements: Vec<[&str; 2]> = Vec::new();
+
+    statements.extend(&loops::statements());
+    statements.extend(&functions::statements());
+
     map_statements(text, &statements)
 }
 
