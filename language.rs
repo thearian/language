@@ -4,6 +4,8 @@ use std::io::Write;
 use std::process::Command;
 use std::process::Output;
 
+mod patterns;
+
 
 fn main() {
     let (content, destination, should_run) = get_and_read_inputs();
@@ -121,16 +123,8 @@ fn iter_words(text: &String) -> String {
     let words: std::str::SplitWhitespace = text.split_whitespace();
     words.map(|word| {
         let mut owned_word = word.to_owned();
-        owned_word = map_word(&owned_word);
+        owned_word = patterns::map_word(&owned_word);
         owned_word.push_str(" ");
         owned_word
     }).collect()
-}
-
-fn map_word(word: &String) -> String {
-    let maped = match word.as_str() {
-        "untill" => "while not",
-        default => default,
-    };
-    String::from(maped)
 }
