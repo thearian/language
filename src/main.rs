@@ -10,7 +10,7 @@ mod patterns;
 fn main() {
     let (content, destination, should_run) = get_and_read_inputs();
 
-    let compiled = compile_content(&content);
+    let compiled = patterns::compile(&content);
 
     let result = write_file(&destination, &compiled);
     print_result(result, &destination);
@@ -102,29 +102,4 @@ fn buffer_to_string(buffer: &[u8]) -> &str {
             Ok(v) => v,
             Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
         };
-}
-
-fn compile_content(content: &String) -> String {
-    iter_lines(&content)
-}
-
-fn iter_lines(text: &String) -> String {
-    let lines: std::str::Lines = text.lines();
-    lines.map(|line| {
-        println!("{}",line);
-        let owned_line = line.to_owned();
-        let mut compiled_line = iter_words(&owned_line);
-        compiled_line.push_str("\n");
-        compiled_line
-    }).collect()
-}
-
-fn iter_words(text: &String) -> String {
-    let words: std::str::SplitWhitespace = text.split_whitespace();
-    words.map(|word| {
-        let mut owned_word = word.to_owned();
-        owned_word = patterns::map_word(&owned_word);
-        owned_word.push_str(" ");
-        owned_word
-    }).collect()
 }
