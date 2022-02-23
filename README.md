@@ -6,21 +6,21 @@ Language was made to make programming a step easier to learn. It is not made for
 
 ## Usage
 Create a `.lang` file like `my_lang_file.lang` and write your code in it. run the command below to compile.
-```
-language my_lang_file result_python_file
+```command
+$ language my_lang_file result_python_file
 ```
 Now you can run your created python file (`result_python_file.py`)./
 To run the script right after compile, add `-r` or `--run` flag after the destination file
-```
-language my_lang_file result_python_file --run
+```command
+$ language my_lang_file result_python_file --run
 ```
 
 ## Development
 ### Run and test
 Install `Rust` and `Cargo`.\
 To run the app and test, use `cargo run`
-```
-cargo run
+```command
+$ cargo run
 ```
 ### Patterns
 The patterns of the language and what it will be compiled to are written with *Regular Expression* in `/patterns` directory.\
