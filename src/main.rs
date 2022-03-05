@@ -3,14 +3,14 @@ use std::fs;
 use std::io::Write;
 use std::process::Command;
 use std::process::Output;
-
-mod patterns;
+use regex::Regex;
+use json;
 
 
 fn main() {
-    let (content, destination, should_run) = get_and_read_inputs();
+    let (content, destination, language, should_run) = get_and_read_inputs();
 
-    let compiled = patterns::compile(&content);
+    let compiled = compile(language, content);
 
     let result = write_file(&destination, &compiled);
     print_result(result, &destination);
@@ -24,14 +24,41 @@ fn main() {
 }
 
 
-fn get_and_read_inputs() -> (String, String, bool) {
+pub fn compile(language: String, source: String) -> String {
+    let app_dir = env::current_exe()
+        .unwrap();
+    let root_dir = app_dir .to_str()
+        .unwrap()
+        .split("target")
+        .collect::<Vec<&str>>()[0];
+    let patterns_string = read_file(
+        &format!("{}/patterns/{}.json", root_dir, language)
+    );
+    let mut text = source.to_owned();
+    let patterns : json::JsonValue = json::parse(&patterns_string).unwrap();
+
+    for pattern in patterns.entries() {
+        let regex_pattern = Regex::new(&pattern.0).unwrap();
+        let replacement = pattern.1.as_str().unwrap();
+
+        let changed_text = regex_pattern.replace_all(&text, replacement);
+        if changed_text != text {
+            text = String::from(changed_text);
+        }
+    }
+
+    return text;
+}
+
+
+fn get_and_read_inputs() -> (String, String, String, bool) {
     let args = get_env_args();
 
     if args.len() < 2 {
         panic!("\n\tExample of use:
-        \n\tlanguage myfile
+        \n\tlanguage myfile.lang
         \n\tor
-        \n\tlanguage myfile myapp\n");
+        \n\tlanguage myfile.lang myapp\n");
     }
 
     let filepath = &args[1];
@@ -48,7 +75,7 @@ fn get_and_read_inputs() -> (String, String, bool) {
         |arg| arg=="-r" || arg=="--run"
     );
 
-    ( content, destination, should_run )
+    ( content, destination, String::from("python"), should_run )
 }
 
 
@@ -58,8 +85,8 @@ fn get_env_args() -> Vec<String> {
 
 
 fn read_file(filepath: &String) -> String {
-    fs::read_to_string(filepath.to_owned()+".lang")
-        .expect("\n\tFaild to read the file")
+    fs::read_to_string(filepath)
+        .expect(&format!("\n\tFaild to read the file {}", filepath))
 }
 
 
