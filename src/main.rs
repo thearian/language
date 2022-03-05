@@ -1,30 +1,44 @@
 use std::env;
 use std::fs;
 use std::io::Write;
-use std::process::Command;
-use std::process::Output;
 use regex::Regex;
 use json;
+use clap::Parser;
 
+/// Programming language simplifier
+#[derive(Parser, Debug)]
+#[clap(
+    author = "Arian Mirahmadi thearian@github mirarianmir@gmail.com",
+    version = "0.0.1",
+    about = "Programming language simplifier",
+    long_about = None
+)]
+struct Args {
+    /// Input file with .lang extention
+    file: String,
+
+    /// Programming language
+    #[clap(short, long, default_value = "python")]
+    language: String,
+
+    /// Output file name
+    #[clap(short, long, default_value = "app")]
+    destination: String
+}
 
 fn main() {
-    let (content, destination, language, should_run) = get_and_read_inputs();
+    // let (content, destination, language, should_run) = get_and_read_inputs();
+    let args = Args::parse();
 
-    let compiled = compile(language, content);
+    let content = read_file(&args.file);
+    let compiled = compile(&args.language, content);
 
-    let result = write_file(&destination, &compiled);
-    print_result(result, &destination);
-
-    if should_run {
-        let output: Output = run_file(&destination);
-        println!("Successfully ran with this output: \n{}",
-            buffer_to_string(&output.stdout)
-        );
-    }
+    let result = write_file(&args.destination, &args.language, &compiled);
+    print_result(result, &args.destination);
 }
 
 
-pub fn compile(language: String, source: String) -> String {
+pub fn compile(language: &String, source: String) -> String {
     let app_dir = env::current_exe()
         .unwrap();
     let root_dir = app_dir .to_str()
@@ -51,38 +65,6 @@ pub fn compile(language: String, source: String) -> String {
 }
 
 
-fn get_and_read_inputs() -> (String, String, String, bool) {
-    let args = get_env_args();
-
-    if args.len() < 2 {
-        panic!("\n\tExample of use:
-        \n\tlanguage myfile.lang
-        \n\tor
-        \n\tlanguage myfile.lang myapp\n");
-    }
-
-    let filepath = &args[1];
-    let content = read_file(filepath);
-
-    println!("Successfully read from '{}'",filepath);
-
-    let mut destination = String::from("app");
-    if args.len() > 2 {
-        destination = args[2].to_owned();
-    }
-
-    let should_run: bool = args.iter().any(
-        |arg| arg=="-r" || arg=="--run"
-    );
-
-    ( content, destination, String::from("python"), should_run )
-}
-
-
-fn get_env_args() -> Vec<String> {
-    env::args().collect()
-}
-
 
 fn read_file(filepath: &String) -> String {
     fs::read_to_string(filepath)
@@ -90,8 +72,13 @@ fn read_file(filepath: &String) -> String {
 }
 
 
-fn write_file(destination: &String, content: &String) -> std::io::Result<()> {
-    let mut file = fs::File::create(destination.to_owned() + ".py")?;
+fn write_file(destination: &String, language: &String, content: &String) -> std::io::Result<()> {
+    let extention = match language.as_str() {
+        "python" => "py",
+        other => other
+    };
+    let filepath = format!("{}.{}", destination, extention);
+    let mut file = fs::File::create(filepath)?;
     file.write_all(content.as_bytes() as &[u8])?;
     Ok(())
 }
@@ -102,31 +89,4 @@ fn print_result(result: std::io::Result<()>, destination: &String) {
         Ok(_) => println!("Successfully compiled at '{}'",destination),
         Err(err) => println!("\n\tFaild Compiling\n\t{}\n", err),
     }
-}
-
-fn run_file(destination: &String) -> Output {
-    let mut command: String = "py ".to_owned();
-    command.push_str(&destination);
-    command.push_str(".py");
-    let output = if cfg!(target_os = "windows") {
-        Command::new("cmd")
-                .args(&["/C", &command])
-                .output()
-                .expect("failed to execute process")
-    } else {
-        Command::new("sh")
-                .arg("-c")
-                .arg(&command)
-                .output()
-                .expect("failed to execute process")
-    };
-    output
-}
-
-fn buffer_to_string(buffer: &[u8]) -> &str {
-    return
-        match std::str::from_utf8(buffer) {
-            Ok(v) => v,
-            Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
-        };
 }
