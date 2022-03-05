@@ -1,4 +1,4 @@
-# Language: a programming language
+# Language: simplify your programming language
 > this repository is in development and is not recommended to be used.
 
 Langauge is a programming language simplifier. It uses an open source one-to-one regex language map  
