@@ -1,8 +1,19 @@
 [package]
 name = "language"
-version = "0.1.0"
+desciption = "a programming language simplifier that makes multiple alternatives for languages syntaxes"
+readme = "README.md"
+version = "0.0.1"
+repository = "https://github.com/thearian/language"
+keywords = ["programming-language", "language", "simplifier", "regex", "python"]
 authors = ["Arian Mirahmadi <mirarianmir@gmail.com>"]
 edition = "2018"
+license = "MIT"
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
