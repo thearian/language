@@ -2,9 +2,10 @@
 name = "language"
 desciption = "a programming language simplifier that makes multiple alternatives for languages syntaxes"
 readme = "README.md"
+rust-version = "1.56"
 version = "0.0.1"
 repository = "https://github.com/thearian/language"
-keywords = ["programming-language", "language", "simplifier", "regex", "python"]
+keywords = ["language", "simplifier", "regex", "python"]
 authors = ["Arian Mirahmadi <mirarianmir@gmail.com>"]
 edition = "2018"
 license = "MIT"
