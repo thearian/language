@@ -2,6 +2,8 @@
 or
 # [feature | bugfix | implement | refactor | test | docs] - [ title ]
 
-**Related issue: ()**
+|Related issue|Assignee|
+|   ---       |  ---   |
+|#            |@       |
 
 ## Description
