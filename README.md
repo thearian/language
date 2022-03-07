@@ -32,7 +32,7 @@ mx = 5
 untill mx > 4
 	print(x)
 ```
-> The code above is a python simplifier
+> The code above is a python simplifier  
 > Take note that you can code in the language you will be compiling to
 
 Then compile it using language binary:

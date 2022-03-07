@@ -2,6 +2,7 @@
     "remember that (?P<n>\\w+) is (?P<d>.+) and gets (?P<p>.+)\r\n":    "def $n($p):\n\t$d",
     "remember that (?P<n>\\w+) is (?P<d>.+)":                           "def $n():\n\t$d",
     "get (?P<n>.+)\r\n":                                                "input($n)\n",
+    
     " (?P<a>.\\w+) to (?P<b>\\w+)":                                     " range($a,$b)",
     "untill (?P<t>.+)\r\n":                                             "while not $t:\n\t",
     "loop in (?P<t>.+)\r\n":                                            "for index in $t:\n\t",

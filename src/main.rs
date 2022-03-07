@@ -27,7 +27,6 @@ struct Args {
 }
 
 fn main() {
-    // let (content, destination, language, should_run) = get_and_read_inputs();
     let args = Args::parse();
 
     let content = read_file(&args.file);
@@ -36,7 +35,6 @@ fn main() {
     let result = write_file(&args.destination, &args.language, &compiled);
     print_result(result, &args.destination);
 }
-
 
 pub fn compile(language: &String, source: String) -> String {
     let app_dir = env::current_exe()
@@ -65,12 +63,10 @@ pub fn compile(language: &String, source: String) -> String {
 }
 
 
-
 fn read_file(filepath: &String) -> String {
     fs::read_to_string(filepath)
         .expect(&format!("\n\tFaild to read the file {}", filepath))
 }
-
 
 fn write_file(destination: &String, language: &String, content: &String) -> std::io::Result<()> {
     let extention = match language.as_str() {
@@ -82,7 +78,6 @@ fn write_file(destination: &String, language: &String, content: &String) -> std:
     file.write_all(content.as_bytes() as &[u8])?;
     Ok(())
 }
-
 
 fn print_result(result: std::io::Result<()>, destination: &String) {
     match result {
